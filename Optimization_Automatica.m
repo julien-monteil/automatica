@@ -9,11 +9,11 @@ epsilon = 1;
 vmax = 25;
 Kpimin = 0;
 
-
+%loop on alphai values
 for i = 1:size(alpha,2)
-    
     alphai = alpha(i);
-
+    
+    %solve optimization problem for each value of alphai
     cvx_begin sdp quiet
         variables gi Kvi Kvi0 Kpi0 c d 
         minimize -gi
@@ -33,8 +33,9 @@ for i = 1:size(alpha,2)
             Kpi0 <= 0.6;
             c <= -tol;
             c+(1+epsilon)*d <= -tol;
-        
     cvx_end 
+    
+    %save if feasible
     if cvx_optval ~= Inf 
         xa=max(eig((Jii0b+Jii0b.')/2));
         ya=max(svd(Jii1a));
@@ -42,6 +43,8 @@ for i = 1:size(alpha,2)
     end
 
 end
+
+%plot control gain results
 figure;
 plot(solution(:,1),solution(:,4:end),'linewidth',1);
 xlabel('alpha')
